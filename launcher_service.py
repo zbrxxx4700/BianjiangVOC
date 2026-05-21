@@ -1,20 +1,24 @@
-"""BianjiangRVC Launcher - HTTP service for extension start/stop control"""
-import json, os, shutil
+"""BianjiangRVC Launcher - silent backend control"""
+import json, os, shutil, subprocess
 from http.server import HTTPServer, BaseHTTPRequestHandler
-import subprocess
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 PORT = 18765
+RVC_PY = r'D:\Software\RVC20240604-AMD\runtime\python.exe'
+BACKEND_PY = os.path.join(BASE, 'backend', 'app.py')
+RVC_DIR = r'D:\Software\RVC20240604-AMD'
+BACKEND_URL = 'http://localhost:8765/health'
 
-def find_bat(keyword):
-    for f in os.listdir(BASE):
-        if keyword in f and f.endswith('.bat'):
-            return os.path.join(BASE, f)
-    return None
+def backend_running():
+    try:
+        import urllib.request
+        return urllib.request.urlopen(BACKEND_URL, timeout=2).status == 200
+    except:
+        return False
 
 class Handler(BaseHTTPRequestHandler):
-    def _json(self, data):
-        self.send_response(200)
+    def _json(self, data, code=200):
+        self.send_response(code)
         self.send_header('Access-Control-Allow-Origin', '*')
         self.send_header('Content-Type', 'application/json')
         self.end_headers()
@@ -29,38 +33,40 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         if self.path == '/status':
-            try:
-                import urllib.request
-                urllib.request.urlopen('http://localhost:8765/health', timeout=2)
-                self._json({'running': True})
-            except:
-                self._json({'running': False})
+            self._json({'running': backend_running()})
         else:
-            self._json({'error': 'not found'})
+            self._json({'error': 'not found'}, 404)
 
     def do_POST(self):
         if self.path == '/start':
-            bat = find_bat('启动')
-            if bat:
-                subprocess.Popen(['cmd.exe', '/c', 'start', '', bat], shell=True)
+            if backend_running():
+                self._json({'status': 'ok', 'message': 'already running'})
+                return
+            env = os.environ.copy()
+            env['PYTHONPATH'] = os.path.join(BASE, 'backend') + ';' + env.get('PYTHONPATH', '')
+            subprocess.Popen(
+                [RVC_PY, BACKEND_PY],
+                cwd=RVC_DIR,
+                env=env,
+                creationflags=subprocess.CREATE_NO_WINDOW,
+            )
             self._json({'status': 'ok'})
         elif self.path == '/stop':
             try:
                 import urllib.request
-                urllib.request.urlopen('http://localhost:8765/shutdown', method='POST', timeout=3)
+                req = urllib.request.Request('http://localhost:8765/shutdown', method='POST')
+                urllib.request.urlopen(req, timeout=3)
             except:
-                bat = find_bat('关闭')
-                if bat:
-                    subprocess.Popen(['cmd.exe', '/c', 'start', '', bat], shell=True)
+                pass
             self._json({'status': 'ok'})
         else:
-            self._json({'error': 'not found'})
+            self._json({'error': 'not found'}, 404)
 
     def log_message(self, fmt, *args):
         pass
 
 if __name__ == '__main__':
-    # One-time startup registration
+    # Register startup
     startup = os.path.join(os.environ['APPDATA'],
         'Microsoft', 'Windows', 'Start Menu', 'Programs', 'Startup',
         'BianjiangRVC_Launcher.vbs')
@@ -70,5 +76,4 @@ if __name__ == '__main__':
             shutil.copy2(vbs, startup)
         except:
             pass
-
     HTTPServer(('127.0.0.1', PORT), Handler).serve_forever()

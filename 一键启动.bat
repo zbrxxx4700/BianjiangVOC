@@ -15,7 +15,7 @@ set /a TOTAL=5
 set /a STEP+=1
 echo [%STEP%/%TOTAL%] 检查端口 8765 状态...
 echo.
-netstat -ano | findstr ":8765" >nul 2>&1
+netstat -ano | findstr ":8765" | findstr "LISTENING" >nul 2>&1
 if %errorlevel%==0 (
     echo   [提示] 端口 8765 已被占用，请先运行一键关闭
     echo.

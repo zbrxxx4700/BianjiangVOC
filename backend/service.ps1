@@ -1,7 +1,7 @@
 # 边江 TTS 服务管理脚本 (PowerShell)
 param([ValidateSet("start","stop","restart","status")][string]$Action = "status")
 
-$BackendDir = "D:\Study\agent\BianjiangVOC\backend"
+$BackendDir = "D:\Study\Claude\BianjiangVOC\backend"
 $RvcRoot = "D:\Software\RVC20240604-AMD"
 $Port = 8765
 $LogFile = "$BackendDir\server.log"

@@ -30,7 +30,7 @@ set /a STEP+=1
 echo [%STEP%/%TOTAL%] 设置运行环境...
 echo.
 cd /d D:\Software\RVC20240604-AMD
-set PYTHONPATH=D:\Study\agent\BianjiangVOC\backend;%PYTHONPATH%
+set PYTHONPATH=D:\Study\Claude\BianjiangVOC\backend;%PYTHONPATH%
 echo   [路径] RVC 根目录: D:\Software\RVC20240604-AMD
 echo   [环境] PYTHONPATH 已设置
 echo.
@@ -39,7 +39,7 @@ echo.
 set /a STEP+=1
 echo [%STEP%/%TOTAL%] 启动 Python 后端...
 echo.
-start /MIN "BianjiangRVC" "D:\Software\RVC20240604-AMD\runtime\python.exe" "D:\Study\agent\BianjiangVOC\backend\app.py"
+start /MIN "BianjiangRVC" "D:\Software\RVC20240604-AMD\runtime\python.exe" "D:\Study\Claude\BianjiangVOC\backend\app.py"
 echo   [启动] 后端已启动，等待就绪...
 echo.
 
@@ -73,7 +73,7 @@ goto CHECK_LOOP
 :TIMEOUT
 echo.
 echo   [超时] 等待超过 30 分钟，启动失败
-echo   [日志] 请查看: D:\Study\agent\BianjiangVOC\backend\server.log
+echo   [日志] 请查看: D:\Study\Claude\BianjiangVOC\backend\server.log
 echo.
 pause
 exit /b 1

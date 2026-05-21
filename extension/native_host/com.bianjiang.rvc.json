@@ -1,0 +1,6 @@
+{
+  "name": "com.bianjiang.rvc",
+  "description": "BianjiangRVC backend manager",
+  "path": "D:\\Study\\Claude\\BianjiangVOC\\extension\\native_host\\run_host.bat",
+  "type": "stdio"
+}

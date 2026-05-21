@@ -35,4 +35,9 @@ async def synth(req:Req):
  buf=io.BytesIO();sf.write(buf,audio,sr,format="WAV",subtype="PCM_16");buf.seek(0)
  return Response(content=buf.read(),media_type="audio/wav")
 
+@app.post("/shutdown")
+async def shutdown():
+ logger.info("shutdown requested")
+ os._exit(0)
+
 if __name__=="__main__":uvicorn.run(app,host=CFG.get("host","0.0.0.0"),port=CFG.get("port",8765))

@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "description": "Replace browser TTS with Bianjiangs RVC voice model",
   "icons": { "16": "Logo.png", "48": "Logo.png", "128": "Logo.png" },
-  "permissions": ["storage", "activeTab", "downloads"],
+  "permissions": ["storage", "activeTab", "downloads", "nativeMessaging"],
   "host_permissions": ["http://localhost:8765/"],
   "web_accessible_resources": [{ "resources": ["Logo.png"], "matches": ["<all_urls>"] }],
   "action": { "default_popup": "popup.html", "default_title": "BianjiangRVC", "default_icon": "Logo.png" },

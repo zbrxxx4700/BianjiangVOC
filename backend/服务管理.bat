@@ -28,8 +28,8 @@ echo.
 echo [启动] 正在启动 BianjiangRVC 后端...
 echo.
 cd /d "D:\Software\RVC20240604-AMD"
-set PYTHONPATH=D:\Study\agent\BianjiangVOC\backend;%PYTHONPATH%
-start /MIN "BianjiangRVC" "D:\Software\RVC20240604-AMD\runtime\python.exe" "D:\Study\agent\BianjiangVOC\backend\app.py"
+set PYTHONPATH=D:\Study\Claude\BianjiangVOC\backend;%PYTHONPATH%
+start /MIN "BianjiangRVC" "D:\Software\RVC20240604-AMD\runtime\python.exe" "D:\Study\Claude\BianjiangVOC\backend\app.py"
 echo [启动] 后端已启动，首次编译 ZLUDA 约 10-30 分钟
 echo [提示] 使用"一键启动.bat"可查看编译进度
 echo.

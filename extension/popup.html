@@ -25,6 +25,8 @@ select option{background:#1a1a2e}
 .btn-sv{background:#4ade80;color:#1a1a2e}.btn-sv:hover{background:#22c55e}
 .btn-del{background:#f87171;color:#fff}.btn-del:hover{background:#ef4444}
 .btn-out{background:#16213e;color:#4ade80;border:1px solid #4ade80!important}.btn-out:hover{background:#4ade80;color:#1a1a2e}
+.btn-start{background:#16213e;color:#4ade80;border:1px solid #4ade80!important;flex:1}.btn-start:hover{background:#4ade80;color:#1a1a2e}
+.btn-stop{background:#16213e;color:#f87171;border:1px solid #f87171!important;flex:1}.btn-stop:hover{background:#f87171;color:#1a1a2e}
 .btn-dl{background:#16213e;color:#fbbf24;border:1px solid #fbbf24!important;width:100%}.btn-dl:hover{background:#fbbf24;color:#1a1a2e}
 .hint{font-size:11px;color:#666;margin-top:5px;line-height:1.5}
 .ft{font-size:11px;color:#666;text-align:center;margin-top:8px}
@@ -33,6 +35,10 @@ select option{background:#1a1a2e}
   <span class="dot off" id="sDot"></span>
   <h1>BianjiangRVC</h1>
   <span id="sTxt" style="font-size:12px;color:#999">检查中</span>
+</div>
+<div class="btn-row" style="margin-bottom:8px">
+  <button class="btn btn-start" id="startBtn">▶ 启动后端</button>
+  <button class="btn btn-stop" id="stopBtn">■ 关闭</button>
 </div>
 <div class="sec"><label>预设方案</label>
   <div style="display:flex;gap:6px;margin-bottom:4px">

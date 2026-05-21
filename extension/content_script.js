@@ -23,6 +23,8 @@ onStateChange(f){this.cb=f}
 setState(s){this.s=s;if(this.cb)this.cb(s)}
 async play(t){
 this.stop();this.ac=new AbortController();this.setState("playing")
+// 从 storage 刷新语速
+try{var _r=await chrome.storage.sync.get("rate");if(_r.rate!==undefined)C.rate=_r.rate}catch(e){}
 try{
  var b={text:t,voice:C.voice,f0_up_key:C.f0UpKey,rate:C.rate};if(C.model)b.model=C.model
  var r=await fetch(C.backendUrl+"/synthesize",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(b),signal:this.ac.signal})

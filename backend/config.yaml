@@ -1,0 +1,29 @@
+# 后端配置
+
+# RVC 模型
+model_name: "BianjiangRVC_V2_e23_s1288.pth"
+weights_dir: "D:/Software/RVC20240604-AMD/assets/weights"
+index_path: "D:/Software/RVC20240604-AMD/logs/BianjiangRVC_V2/added_IVF634_Flat_nprobe_1_BianjiangRVC_V2_v2.index"
+rvc_root: "D:/Software/RVC20240604-AMD"
+
+# 默认源 TTS 声音
+default_voice: "zh-CN-YunxiNeural"
+
+# 可选源声音列表（浏览器扩展可切换）
+source_voices:
+  - "zh-CN-YunxiNeural"
+  - "ko-KR-HyunsuMultilingualNeural"
+
+# RVC 推理参数
+f0_up_key: 0
+f0_method: "pm"
+index_rate: 0.75
+filter_radius: 3
+rms_mix_rate: 0.25
+protect: 0.33
+resample_sr: 0
+
+# 服务
+host: "0.0.0.0"
+port: 8765
+max_concurrent: 4

@@ -1,0 +1,57 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>BianjiangRVC</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{width:350px;font-family:-apple-system,"Microsoft YaHei",sans-serif;background:#1a1a2e;color:#eee;padding:14px}
+.hdr{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.hdr h1{font-size:17px;font-weight:600;flex:1}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+.dot.on{background:#4ade80}.dot.off{background:#f87171}.dot.busy{background:#fbbf24;animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;padding:7px 10px;background:#16213e;border-radius:8px}
+.row .lbl{font-size:13px}
+.switch{position:relative;width:40px;height:22px;cursor:pointer;flex-shrink:0}
+.switch input{display:none}
+.sl{position:absolute;inset:0;background:#555;border-radius:11px;transition:.3s}
+.sl::before{content:"";position:absolute;width:18px;height:18px;left:2px;bottom:2px;background:#fff;border-radius:50%;transition:.3s}
+.switch input:checked+.sl{background:#4ade80}
+.switch input:checked+.sl::before{transform:translateX(18px)}
+.sec{margin-bottom:8px}
+.sec label{display:block;font-size:12px;color:#999;margin-bottom:3px}
+select,input[type=range],input[type=text]{width:100%;padding:7px;background:#16213e;border:1px solid #333;border-radius:6px;color:#eee;font-size:13px}
+select option{background:#1a1a2e}
+.range-row{display:flex;align-items:center;gap:8px};.range-row input[type=range]{flex:1}
+.range-row .val{min-width:32px;text-align:center;font-size:13px;color:#4ade80}
+.btn-row{display:flex;gap:6px}
+.btn,.btn-sm{padding:7px;border-radius:6px;font-size:12px;cursor:pointer;text-align:center;transition:.2s;border:none}
+.btn-sv{background:#4ade80;color:#1a1a2e}.btn-sv:hover{background:#22c55e}
+.btn-del{background:#f87171;color:#fff}.btn-del:hover{background:#ef4444}
+.btn-out{background:#16213e;color:#4ade80;border:1px solid #4ade80!important}.btn-out:hover{background:#4ade80;color:#1a1a2e}
+.btn-dl{background:#16213e;color:#fbbf24;border:1px solid #fbbf24!important;width:100%}.btn-dl:hover{background:#fbbf24;color:#1a1a2e}
+.hint{font-size:11px;color:#666;margin-top:5px;line-height:1.5}
+.ft{font-size:11px;color:#666;text-align:center;margin-top:8px}
+</style></head><body>
+<div class="hdr">
+  <span class="dot off" id="sDot"></span>
+  <h1>BianjiangRVC</h1>
+  <span id="sTxt" style="font-size:12px;color:#999">检查中</span>
+</div>
+<div class="sec"><label>预设方案</label>
+  <div style="display:flex;gap:6px;margin-bottom:4px">
+    <select id="presetSelect" style="flex:1"><option value="">-- 选择预设 --</option></select>
+    <button class="btn btn-out" id="applyPreset" style="flex:0;padding:7px 10px">应用</button>
+  </div>
+  <div style="display:flex;gap:6px">
+    <input type="text" id="presetName" placeholder="新预设名称..." style="flex:1">
+    <button class="btn btn-sv" id="savePreset" style="flex:0">保存</button>
+    <button class="btn btn-del" id="delPreset" style="flex:0">删除</button>
+  </div>
+</div>
+<div class="row"><span class="lbl">启用替换</span><label class="switch"><input type="checkbox" id="enabledToggle" checked><span class="sl"></span></label></div>
+<div class="row"><span class="lbl">自动朗读（选中即读）</span><label class="switch"><input type="checkbox" id="autoReadToggle"><span class="sl"></span></label></div>
+<div class="sec"><label>推理模型</label><select id="modelSelect"><option value="">加载中...</option></select></div>
+<div class="sec"><label>源声音</label><select id="voiceSelect"><option value="zh-CN-YunxiNeural">Yunxi</option><option value="ko-KR-HyunsuMultilingualNeural">Hyunsu</option></select></div>
+<div class="sec"><label>音调 (f0_up_key)</label><div class="range-row"><input type="range" id="pitchSlider" min="-12" max="12" value="0" step="1"><span class="val" id="pitchVal">0</span></div></div>
+<div class="sec"><label>语速</label><div class="range-row"><input type="range" id="rateSlider" min="0.5" max="2.0" value="1.0" step="0.1"><span class="val" id="rateVal">1.0</span></div></div>
+<button class="btn btn-dl" id="downloadBtn">下载朗读音频</button>
+<div class="hint">快捷键: <b>Space</b> 暂停/继续 · <b>Esc</b> 停止</div>
+<div class="ft">后端: <span id="backendUrl">http://localhost:8765</span></div>
+<script src="popup.js"></script></body></html>

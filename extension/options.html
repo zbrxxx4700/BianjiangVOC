@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>边江 TTS - 设置</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      width: 400px;
+      font-family: -apple-system, "Microsoft YaHei", sans-serif;
+      background: #1a1a2e;
+      color: #eee;
+      padding: 20px;
+    }
+    h1 { font-size: 18px; margin-bottom: 20px; }
+    .field { margin-bottom: 16px; }
+    .field label {
+      display: block;
+      font-size: 12px;
+      color: #999;
+      margin-bottom: 4px;
+    }
+    .field input, .field select {
+      width: 100%;
+      padding: 8px 10px;
+      background: #16213e;
+      border: 1px solid #333;
+      border-radius: 6px;
+      color: #eee;
+      font-size: 13px;
+    }
+    .hint {
+      font-size: 11px;
+      color: #666;
+      margin-top: 4px;
+    }
+    button {
+      padding: 10px 20px;
+      background: #4ade80;
+      color: #1a1a2e;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    button:hover { background: #22c55e; }
+    #saveMsg {
+      display: inline-block;
+      margin-left: 10px;
+      font-size: 13px;
+      color: #4ade80;
+    }
+  </style>
+</head>
+<body>
+  <h1>边江 TTS - 设置</h1>
+
+  <div class="field">
+    <label>后端服务地址</label>
+    <input type="text" id="backendUrl" value="http://localhost:8765">
+    <div class="hint">修改后需要重启服务或等待下次连接</div>
+  </div>
+
+  <div class="field">
+    <label>默认源声音</label>
+    <select id="defaultVoice">
+      <option value="zh-CN-YunxiNeural">云希 (中文男声)</option>
+      <option value="ko-KR-HyunsuMultilingualNeural">Hyunsu (韩语多语言)</option>
+    </select>
+  </div>
+
+  <div class="field">
+    <label>默认音调偏移 (f0_up_key)</label>
+    <input type="number" id="defaultF0" value="0" min="-12" max="12">
+    <div class="hint">升调为正，降调为负（半音）</div>
+  </div>
+
+  <button id="saveBtn">保存设置</button>
+  <span id="saveMsg"></span>
+
+  <script src="options.js"></script>
+</body>
+</html>

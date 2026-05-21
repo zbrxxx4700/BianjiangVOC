@@ -1,0 +1,24 @@
+{
+  "manifest_version": 3,
+  "name": "BianjiangRVC - TTS Replacement",
+  "version": "1.0.0",
+  "description": "Replace browser TTS with Bianjiangs RVC voice model",
+  "icons": { "16": "Logo.png", "48": "Logo.png", "128": "Logo.png" },
+  "permissions": ["storage", "activeTab", "downloads"],
+  "host_permissions": ["http://localhost:8765/"],
+  "web_accessible_resources": [{ "resources": ["Logo.png"], "matches": ["<all_urls>"] }],
+  "action": { "default_popup": "popup.html", "default_title": "BianjiangRVC", "default_icon": "Logo.png" },
+  "options_page": "options.html",
+  "commands": {
+    "toggle-bianjiang": {
+      "suggested_key": { "default": "Ctrl+Shift+V", "windows": "Ctrl+Shift+V" },
+      "description": "Toggle BianjiangRVC on/off"
+    }
+  },
+  "content_scripts": [{
+    "matches": ["<all_urls>"],
+    "run_at": "document_start",
+    "js": ["content_script.js"]
+  }],
+  "background": { "service_worker": "background.js", "type": "module" }
+}

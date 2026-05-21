@@ -9,6 +9,7 @@ class R:
   load_dotenv(dotenv_path=os.path.join(self._r,".env"),override=True)
   self._v=None;self._g=None;self._s=None;self._m=None;self._l=threading.Lock();self._ld=False
   self._lm(self._c.get("model_name",""))
+  self._warmup()
  def _lm(self,n):
   from configs.config import Config;from infer.modules.vc.modules import VC
   self._g=Config();self._v=VC(self._g);self._v.get_vc(n);self._s=self._v.tgt_sr;self._m=n;self._ld=True
@@ -43,6 +44,18 @@ class R:
   sz=os.path.getsize(p)
   if sz<100:raise Exception(f"TTS empty:{sz}")
   return p
+ def _warmup(self):
+  logger.info("warming up RVC model...")
+  try:
+   import numpy as np;sr=self._s
+   silence=np.zeros(int(sr*0.1),dtype=np.float32)
+   tp=tempfile.NamedTemporaryFile(suffix=".wav",delete=False);p=tp.name;tp.close()
+   sf.write(p,silence,sr,format="WAV",subtype="PCM_16")
+   w=self._wav(p);os.unlink(p)
+   self._v.vc_single(0,w,0,None,"pm",self._c["index_path"],"",0.75,3,0,0.25,0.33)
+   os.unlink(w)
+  except Exception as e:logger.warning(f"warmup failed (ignored): {e}")
+  logger.info("RVC model ready")
  def _wav(self,m):
   a,s=librosa.load(m,sr=None)
   t=tempfile.NamedTemporaryFile(suffix=".wav",delete=False);o=t.name;t.close()

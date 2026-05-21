@@ -149,8 +149,11 @@ async function check() {
     chrome.storage.sync.get("model", function(i) { if (i.model) ms.value = i.model; });
     setStatus("on", "Ready"); setBtns(true, false);
   } catch(e) {
-    setStatus("off", "Offline"); ms.innerHTML = "<option>Offline</option>";
-    setBtns(false, true);
+    // 启动过程中不显示 Offline
+    if (!st.disabled) {
+      setStatus("off", "Offline"); ms.innerHTML = "<option>Offline</option>";
+      setBtns(false, true);
+    }
   }
 }
 check();

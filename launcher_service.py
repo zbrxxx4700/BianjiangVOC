@@ -39,6 +39,10 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         if self.path == '/start':
+            # Kill any process on port 8765 first
+            import subprocess as _sp
+            _sp.run('for /f "tokens=5" %i in ('netstat -ano ^| findstr ":8765"') do taskkill /F /PID %i 2>nul', shell=True)
+            import time as _t; _t.sleep(1)
             if backend_running():
                 self._json({'status': 'ok', 'message': 'already running'})
                 return

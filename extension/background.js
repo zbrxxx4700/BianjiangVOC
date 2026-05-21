@@ -45,14 +45,8 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 async function updateBadge() {
   try {
     const { backendUrl } = await chrome.storage.sync.get('backendUrl');
-    const r = await fetch(`${backendUrl || DEFAULT_CONFIG.backendUrl}/health`);
-    if (r.ok) {
-      chrome.action.setBadgeText({ text: 'ON' });
-      chrome.action.setBadgeBackgroundColor({ color: '#4ade80' });
-      return;
-    }
+    await fetch(`${backendUrl || DEFAULT_CONFIG.backendUrl}/health`);
   } catch {}
-  chrome.action.setBadgeText({ text: '' });
 }
 updateBadge();
 setInterval(updateBadge, 30000);

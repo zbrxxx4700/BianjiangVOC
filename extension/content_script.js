@@ -23,25 +23,79 @@ onStateChange(f){this.cb=f}
 setState(s){this.s=s;if(this.cb)this.cb(s)}
 async play(t){
 this.stop();this.ac=new AbortController();this.setState("playing")
-// 从 storage 刷新语速
 try{var _r=await chrome.storage.sync.get("rate");if(_r.rate!==undefined)C.rate=_r.rate}catch(e){}
+
+// 分句：按句号、问号、感叹号、换行分割
+var sentences=t.split(/[。！？
+]+/).filter(function(s){return s.trim().length>0})
+if(sentences.length===0){this.setState("idle");return}
+
+// 单句直接播
+if(sentences.length===1){
+ this._playOne(t);return
+}
+
+// 多句：播第一句，后台排队后续
+var _this=this
+this._queue=[]
+this._queueIdx=0
+
+function playNext(){
+ if(!_this._queue||_this._queueIdx>=_this._queue.length){_this.setState("idle");_this.cleanup();return}
+ var item=_this._queue[_this._queueIdx++]
+ ensureAudioCtx()
+ _this.a=new Audio(item.url);_this.u=item.url
+ _this.a.playbackRate=C.rate
+ _this.a.onended=function(){if(_this.s==="playing")playNext()}
+ _this.a.onerror=function(){playNext()}
+ _this.a.play().catch(function(){playNext()})
+}
+
+// 先播第一句
+var first=sentences.shift()
+try{
+ var b={text:first,voice:C.voice,f0_up_key:C.f0UpKey,rate:C.rate};if(C.model)b.model=C.model
+ var r=await fetch(C.backendUrl+"/synthesize",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(b),signal:this.ac.signal})
+ if(!r.ok)throw Error("HTTP "+r.status)
+ var blob=await r.blob();C.lastBlob=blob
+ var u=URL.createObjectURL(blob)
+ ensureAudioCtx()
+ _this.a=new Audio(u);_this.u=u
+ _this.a.playbackRate=C.rate
+ _this.a.onended=function(){if(_this.s==="playing")playNext()}
+ _this.a.onerror=function(){playNext()}
+ try{await _this.a.play()}catch(pe){
+  var src=audioCtx.createMediaElementSource(_this.a)
+  src.connect(audioCtx.destination)
+  await _this.a.play()
+ }
+ // 后台预取后续句子
+ sentences.forEach(function(s){
+  if(!_this.ac||_this.ac.signal.aborted)return
+  var bb={text:s,voice:C.voice,f0_up_key:C.f0UpKey,rate:C.rate};if(C.model)bb.model=C.model
+  fetch(C.backendUrl+"/synthesize",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(bb),signal:_this.ac.signal})
+  .then(function(rr){if(!rr.ok)throw Error();return rr.blob()})
+  .then(function(blb){
+   var uu=URL.createObjectURL(blb)
+   _this._queue.push({url:uu})
+  }).catch(function(){})
+ })
+}catch(e){if(e.name!=="AbortError"){console.warn(e);this.setState("idle");this.cleanup()}}}
+
+_playOne=async function(t){
 try{
  var b={text:t,voice:C.voice,f0_up_key:C.f0UpKey,rate:C.rate};if(C.model)b.model=C.model
  var r=await fetch(C.backendUrl+"/synthesize",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(b),signal:this.ac.signal})
  if(!r.ok)throw Error("HTTP "+r.status)
  C.lastBlob=await r.blob()
  var u=URL.createObjectURL(C.lastBlob)
-
- // 解锁 AudioContext（解决自动播放策略）
  ensureAudioCtx()
-
  this.a=new Audio(u);this.u=u
  var s=this
  this.a.onended=function(){s.setState("idle");s.cleanup()}
  this.a.onerror=function(){s.setState("idle");s.cleanup()}
  this.a.playbackRate=C.rate
  try{await this.a.play()}catch(pe){
-  // 自动播放被阻止，尝试用 AudioContext 播放
   var src=audioCtx.createMediaElementSource(this.a)
   src.connect(audioCtx.destination)
   await this.a.play()
@@ -49,7 +103,7 @@ try{
 }catch(e){if(e.name!=="AbortError"){console.warn(e);this.setState("idle");this.cleanup()}}}
 pause(){if(this.a&&!this.a.paused){this.a.pause();this.setState("paused")}}
 resume(){if(this.a&&this.a.paused&&this.a.currentTime>0){this.a.play().catch(function(){});this.setState("playing")}}
-stop(){if(this.ac){this.ac.abort();this.ac=null}if(this.a){this.a.pause();this.a.onended=null;this.a.onerror=null;this.a=null}if(this.u){URL.revokeObjectURL(this.u);this.u=null}if(this.s!=="idle")this.setState("idle")}
+stop(){if(this.ac){this.ac.abort();this.ac=null}if(this._queue){this._queue=[];this._queueIdx=0}if(this.a){this.a.pause();this.a.onended=null;this.a.onerror=null;this.a=null}if(this.u){URL.revokeObjectURL(this.u);this.u=null}if(this.s!=="idle")this.setState("idle")}
 cleanup(){if(this.u){URL.revokeObjectURL(this.u);this.u=null}this.a=null;this.ac=null}
 toggle(t){if(this.s==="playing")this.pause();else if(this.s==="paused")this.resume();else this.play(t)}
 download(){if(C.lastBlob){var u=URL.createObjectURL(C.lastBlob);var a=document.createElement("a");a.href=u;a.download="bianjiang.wav";a.click();setTimeout(function(){URL.revokeObjectURL(u)},1000)}}
